@@ -1,0 +1,37 @@
+// Enclave/Enclave.edl
+enclave {
+    include "sgx_tcrypto.h"
+
+    trusted {
+        public sgx_status_t ecall_init_ckks(int polyDegree, double scale);
+        public sgx_status_t ecall_generate_keys();
+        public sgx_status_t ecall_encrypt([in, count=msg_len] const double* msg_real, 
+                                         [in, count=msg_len] const double* msg_imag,
+                                         uint32_t msg_len,
+                                         [out, count=ct_len] int64_t* ciphertext,
+                                         uint32_t ct_len);
+        public sgx_status_t ecall_decrypt([in, count=ct_len] const int64_t* ciphertext,
+                                         uint32_t ct_len,
+                                         [out, count=msg_len] double* msg_real,
+                                         [out, count=msg_len] double* msg_imag,
+                                         uint32_t msg_len);
+        public sgx_status_t ecall_add([in, count=ct1_len] const int64_t* ct1,
+                                     uint32_t ct1_len,
+                                     [in, count=ct2_len] const int64_t* ct2,
+                                     uint32_t ct2_len,
+                                     [out, count=result_len] int64_t* result,
+                                     uint32_t result_len);
+        public sgx_status_t ecall_multiply([in, count=ct1_len] const int64_t* ct1,
+                                          uint32_t ct1_len,
+                                          [in, count=ct2_len] const int64_t* ct2,
+                                          uint32_t ct2_len,
+                                          [out, count=result_len] int64_t* result,
+                                          uint32_t result_len);
+    };
+
+    untrusted {
+        void ocall_print_string([in, string] const char* str);
+        void ocall_print_int(int64_t value);
+        void ocall_print_double(double value);
+    };
+};
